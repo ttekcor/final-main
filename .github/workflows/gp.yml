@@ -7,11 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     container: golang:1.24.1
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - name: Trust workspace for Git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
 
       - name: Build
-        run: go build -v ./...
+        run: go build -v -buildvcs=false ./...
 
   test:
     needs: build
@@ -19,13 +24,13 @@ jobs:
     container: golang:1.24.1
     steps:
       - uses: actions/checkout@v4
+      - name: Trust workspace for Git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Run Unit Tests
-        working-directory: final-main
         run: GOOS=linux GOARCH=amd64 go test ./...
 
       - name: Vet
-        working-directory: final-main
         run: go vet ./...
 
   deploy:
