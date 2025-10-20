@@ -1,6 +1,6 @@
 module github.com/ttekcor/final-main
 
-go 1.24.12
+go 1.22.12
 
 require (
 	github.com/stretchr/testify v1.11.1
