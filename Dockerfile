@@ -1,16 +1,16 @@
-FROM golang:1.24
+FROM golang:1.24.1
 
-WORKDIR /app/final-main
+WORKDIR /app
 
 # Сначала копируем файлы модулей для кеширования зависимостей
-COPY final-main/go.mod ./
-RUN go mod tidy
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
 
-# Затем копируем исходники
-COPY final-main/ ./
+# Затем копируем исходники из корня репозитория
+COPY . ./
 
 # Сборка бинарника из корня модуля
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /main .
-
 
 CMD ["/main"]
